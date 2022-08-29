@@ -234,7 +234,7 @@ async function pingCommand(client, message, args) {
 async function everyoneCommand(client, message, args) {
     const chat = await message.getChat()
     const quotedMessage = await message.getQuotedMessage();
-    const participants = await chat.getParticipants();;
+    const participants = chat.participants;
     let pingDict = {};
     for (let participant of participants) {
         if (participant.id.user != client.info.wid._serialized.split("@")[0]) {
