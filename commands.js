@@ -29,7 +29,7 @@ async function helpCommand(message, args) {
     if (args.length == 0) {
         helpMessage = 'Comandi disponibili:\n';
         for (let command in AVAILABLE_COMMANDS) {
-            helpMessage += `• ${nconf.get("COMMAND_PREFIX")}${command}: ${nconf.get("COMMAND_PREFIX")[command].description}\n`;
+            helpMessage += `• ${nconf.get("COMMAND_PREFIX")}${command}: ${AVAILABLE_COMMANDS[command].description}\n`;
         };
         helpMessage += `\nScrivi ${nconf.get("COMMAND_PREFIX")}help <comando> per maggiori informazioni su un comando specifico`;
     }
