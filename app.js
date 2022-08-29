@@ -25,13 +25,13 @@ const KEYWORD_REGEXES = {
     'arancina': /arancina/i,
     'arancino': /arancino/i,
     'terrone': /terron[e|i|a]/i,
-}
+};
 
 async function logMessage(message) {
     const contact = await message.getContact();
     const chat = await message.getChat();
     console.log(`${contact.pushname} (${contact.id.user} @ ${message.from}): ${message.body}`);
-}
+};
 
 async function onMessage(message) {
     if (nconf.get("CHAT_WHITELIST").includes(message.from) && message.type === 'chat') {
@@ -42,7 +42,7 @@ async function onMessage(message) {
         if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
             const command = message.body.trim().split(' ')[0].slice(1);
             const args = message.body.trim().split(' ').slice(1);
-            await commandDispatcher(message, command, args);
+            await commandDispatcher(client, message, command, args);
         }
         else {
             let keywordsFound = []
@@ -96,7 +96,7 @@ async function onGroupJoin(groupNotification) {
         await groupNotification.reply(replyMessage, { mentions: [mentions] });
     }
     await chat.sendMessage();
-}
+};
 
 client.on('message', onMessage);
 
