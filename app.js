@@ -6,7 +6,8 @@ const { nconf } = require('./config.js');
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        headless: false
+        headless: true,
+        args: ['--no-sandbox'],
     }
 });
 
@@ -89,9 +90,10 @@ async function onGroupJoin(groupNotification) {
     const chat = await groupNotification.getChat();
     const participant = groupNotification.id.participant;
     const chat_id = chat.id._serialized;
-    if (nconf.get("GROUP_WHITELIST").includes(chat_id)) {
-        console.log(`${participant} joined ${chat_id}`);
-        let replyMessage = `Ciao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}! Scrivi ${nconf.get("COMMAND_PREFIX")}discord per ricevere il link al nostro server di Discord.\n⚠️ Questo bot, così come il server Discord, non è ufficiale e non è affiliato ad alcuna organizzazione.`
+    if (nconf.get("CHAT_WHITELIST").includes(chat_id)) {
+        const replyMessage = `Ciao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}! ${nconf.get("DISCORD_URL")} è il nostro server Discord.\n⚠️ Questo bot, così come il server Discord, non è ufficiale e non è affiliato ad alcuna organizzazione, inclusa PoliNetwork.`
+        const mentions = { id: { _serialized: participant } };
+        await groupNotification.reply(replyMessage, { mentions: [mentions] });
     }
     await chat.sendMessage();
 }
