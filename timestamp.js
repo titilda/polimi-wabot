@@ -15,7 +15,6 @@ function getRateLimit(key, chat, seconds) {
     let timeStamp = new Date(timeString);
     let now = new Date();
     let diff = now - timeStamp;
-    console.log(diff / 1000)
     if (diff > seconds * 1000) {
         nconf.set(`rateLimit:${key}:${chat}`, now.toISOString());
         nconf.save();
