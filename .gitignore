@@ -241,4 +241,7 @@ $RECYCLE.BIN/
 
 ### WWebJS ###
 .wwebjs_auth/
+
+### PoliMi Bot
 data.json
+keyword_handlers/handler_*.js

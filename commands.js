@@ -12,6 +12,7 @@ const AVAILABLE_COMMANDS = {
     'leave': { description: 'Abbandona un gruppo di ping specifico', syntax: 'leave <gruppo>', handler: leaveCommand },
     'mygroups': { description: 'Elenco dei gruppi di ping a cui sei iscritto', syntax: 'mygroups', handler: mygroupsCommand },
     'ping': { description: 'Pinga il gruppo specificato (puoi rispondere con un ping a un messaggio per portarlo all\'attenzione del gruppo)', syntax: 'ping <gruppo1> [gruppo2] ...', handler: pingCommand },
+    'list': { description: 'Elenco dei membri del gruppo specificato', syntax: 'list <gruppo>', handler: listCommand },
     'everyone': { description: 'Pinga tutti gli utenti', syntax: 'everyone', handler: everyoneCommand },
 };
 
@@ -66,6 +67,31 @@ async function groupsCommand(client, message, args) {
     await message.reply(replyMessage);
 };
 
+async function listCommand(client, message, args) {
+    if (args.length !== 1) {
+        await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}list <gruppo> per elencare i membri del gruppo`);
+        return;
+    };
+    args[0] = args[0].toUpperCase();
+    if (!getGroups().includes(args[0])) {
+        await message.reply(`Gruppo ${args[0]} non trovato`);
+        return;
+    };
+    const members = getGroupMembers(args[0]);
+    let messageLines = [];
+    if (members.length > 0) {
+        messageLines.push(`Membri del gruppo ${args[0]}:`);
+        for (let member of members) {
+            const contact = await client.getContactById(member + "@c.us");
+            messageLines.push(`• ${contact.pushname}`);
+        };
+    }
+    else {
+        messageLines.push(`Il gruppo ${args[0]} è vuoto`);
+    };
+    await message.reply(messageLines.join('\n'));
+}
+
 async function joinCommand(client, message, args) {
     if (args.length == 0) {
         await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}join <gruppo> per unirti a un gruppo di ping`);
@@ -81,8 +107,12 @@ async function joinCommand(client, message, args) {
             if (getGroups().includes(group)) {
                 const contact = await message.getContact();
                 if (!getGroupMembers(group).includes(contact.id.user)) {
-                    addMemberToGroup(group, contact.id.user);
-                    successfullyAdded.push(group);
+                    if (!addMemberToGroup(group, contact.id.user) && !unsuccessfullyAdded.includes(group)) {
+                        unsuccessfullyAdded.push(group);
+                    }
+                    else {
+                        successfullyAdded.push(group);
+                    };
                 }
                 else {
                     alreadyAdded.push(group);
@@ -102,10 +132,10 @@ async function joinCommand(client, message, args) {
         };
 
         if (unsuccessfullyAdded.length == 1) {
-            replyMessageLines.push(`Gruppo non trovato: ${unsuccessfullyAdded.join(', ')}`);
+            replyMessageLines.push(`Gruppo non trovato o non joinabile: ${unsuccessfullyAdded.join(', ')}`);
         }
         else if (unsuccessfullyAdded.length > 1) {
-            replyMessageLines.push(`Gruppi non trovati: ${unsuccessfullyAdded.join(', ')}`);
+            replyMessageLines.push(`Gruppi non trovati o non joinabili: ${unsuccessfullyAdded.join(', ')}`);
         };
         await message.reply(replyMessageLines.join('\n'));
     };
@@ -201,7 +231,6 @@ async function pingCommand(client, message, args) {
             for (let person of peopleToPing) {
                 try {
                     const contact = await client.getContactById(person + "@c.us");
-                    console.log(contact.pushname);
                     pingDict[person] = contact;
                 }
                 catch (error) {
@@ -270,8 +299,8 @@ async function everyoneCommand(client, message, args) {
     }
     else {
         await message.reply("Non ci sono utenti da pingare");
-    }
-}
+    };
+};
 
 // MODULE EXPORTS
 
