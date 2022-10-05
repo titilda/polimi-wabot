@@ -1,0 +1,23 @@
+{
+  "RATE_LIMIT_EVERYONE": 28800,
+  "CHAT_WHITELIST": [],
+  "DISCORD_URL": "https://discord.gg/1234",
+  "COMMAND_PREFIX": "/",
+  "BLACKLIST": [],
+  "groups": {
+    "EXAMPLE": {
+      "members": [],
+      "owner": "system",
+      "created": "2022-08-31T10:02:00.707Z",
+      "joinable": false,
+      "leavable": true,
+      "pingable": true,
+      "visible": true
+    }
+  },
+  "welcome_messages": [
+    "Just hopped onto the group!",
+    "Welcome to the party"
+  ],
+  "rateLimit": {}
+}

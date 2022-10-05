@@ -1,12 +1,18 @@
 var { nconf } = require('./config.js');
 
-function getGroups() {
-    return Object.keys(nconf.get('groups'));
-}
+function getGroups(showHidden = false) {
+    let groups = [];
+    for (let group in nconf.get('groups')) {
+        if (nconf.get('groups')[group].visible || showHidden) {
+            groups.push(group);
+        };
+    };
+    return groups;
+};
 
 function getGroupMembers(group) {
-    return nconf.get('groups')[group];
-}
+    return nconf.get('groups')[group]["members"];
+};
 
 function getGroupsWithMember(member) {
     const groups = getGroups();
@@ -19,18 +25,26 @@ function getGroupsWithMember(member) {
     return groupsWithMember;
 };
 
-function addMemberToGroup(group, member) {
-    nconf.get('groups')[group].push(member);
+function addMemberToGroup(group, member, privileged = false) {
+    if (!nconf.get('groups')[group]["joinable"] && !privileged) {
+        return false;
+    };
+    nconf.get('groups')[group]["members"].push(member);
     nconf.save();
+    return true;
 };
 
-function removeMemberFromGroup(group, member) {
-    const index = nconf.get('groups')[group].indexOf(member);
+function removeMemberFromGroup(group, member, privileged = false) {
+    if (!nconf.get('groups')[group]["leavable"] && !privileged) {
+        return false;
+    };
+    const index = nconf.get('groups')[group]["members"].indexOf(member);
     if (index > -1) {
-        nconf.get('groups')[group].splice(index, 1);
+        nconf.get('groups')[group]["members"].splice(index, 1);
     };
     nconf.save();
-}
+    return true;
+};
 
 module.exports = {
     getGroups: getGroups,
