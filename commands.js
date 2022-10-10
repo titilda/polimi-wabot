@@ -1,10 +1,11 @@
-var { nconf } = require('./config.js');
-var { addMemberToGroup, removeMemberFromGroup, getGroups, getGroupMembers, getGroupsWithMember } = require('./groups.js');
-var { getRateLimit } = require('./timestamp.js');
+const { nconf } = require('./config.js');
+const { addMemberToGroup, removeMemberFromGroup, getGroups, getGroupMembers, getGroupsWithMember } = require('./groups.js');
+const { getRateLimit } = require('./timestamp.js');
+const { importModules } = require('./utils.js');
 
 const DISCORD_URL = nconf.get('DISCORD_URL');
 
-const AVAILABLE_COMMANDS = {
+var AVAILABLE_COMMANDS = {
     'help': { description: 'Mostra questo messaggio', syntax: 'help [comando]', handler: helpCommand },
     'discord': { description: 'Link al nostro server di Discord', syntax: 'discord', handler: discordCommand },
     'groups': { description: 'Elenco dei gruppi di ping', syntax: 'groups', handler: groupsCommand },
@@ -15,6 +16,20 @@ const AVAILABLE_COMMANDS = {
     'list': { description: 'Elenco dei membri del gruppo specificato', syntax: 'list <gruppo>', handler: listCommand },
     'everyone': { description: 'Pinga tutti gli utenti', syntax: 'everyone', handler: everyoneCommand },
 };
+
+const handlerDir = './command_handlers/';
+
+const handlers = importModules(handlerDir);
+
+if (Object.keys(handlers).length > 0) {
+    console.log(`Loaded ${Object.keys(handlers).length} custom command handlers:`);
+    for (const [name, handler] of Object.entries(handlers)) {
+        AVAILABLE_COMMANDS[handler.commandName] = handler.command;
+        console.log(`- ${name}`);
+    }
+} else {
+    console.log('No custom command handlers found.');
+}
 
 async function commandDispatcher(client, message, command, args) {
     if (AVAILABLE_COMMANDS[command]) {
