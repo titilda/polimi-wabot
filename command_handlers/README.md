@@ -1,6 +1,6 @@
 # Command Handlers
 
-In questa directory, inserire moduli `handler_XXXXX.js` che esportano una stringa `commandName` con il nome del comando (es. `"hello"` per il comando `/hello`) e un  oggetto JS `command` così strutturato:
+In questa directory, inserire moduli `handler_XXXXX.js` che esportano una stringa `COMMAND_NAME` con il nome del comando (es. `"hello"` per il comando `/hello`) e un  oggetto JS `command` così strutturato:
 
 ```js
 command = {
@@ -19,11 +19,11 @@ command = {
 ## Esempio: handler_marco.js
 
 ```js
-const commandName = "marco";
+const COMMAND_NAME = "marco";
 
 const command = {
     description: 'Marco?',
-    syntax: '/marco',
+    syntax: 'marco',
     handler: marcoCommand
 };
 
@@ -32,7 +32,7 @@ async function chiCommand(client, message, args) {
 }
 
 module.exports = {
-    commandName: commandName,
+    COMMAND_NAME: COMMAND_NAME,
     command: command
 };
 ```
