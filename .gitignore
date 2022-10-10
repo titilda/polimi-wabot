@@ -244,4 +244,4 @@ $RECYCLE.BIN/
 
 ### PoliMi Bot
 data.json
-keyword_handlers/handler_*.js
+*/handler_*.js
