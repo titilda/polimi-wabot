@@ -3,11 +3,8 @@ const { addMemberToGroup, removeMemberFromGroup, getGroups, getGroupMembers, get
 const { getRateLimit } = require('./timestamp.js');
 const { importModules } = require('./utils.js');
 
-const DISCORD_URL = nconf.get('DISCORD_URL');
-
 var AVAILABLE_COMMANDS = {
     'help': { description: 'Mostra questo messaggio', syntax: 'help [comando]', handler: helpCommand },
-    'discord': { description: 'Link al nostro server di Discord', syntax: 'discord', handler: discordCommand },
     'groups': { description: 'Elenco dei gruppi di ping', syntax: 'groups', handler: groupsCommand },
     'join': { description: 'Unisciti a un gruppo di ping specifico', syntax: 'join <gruppo>', handler: joinCommand },
     'leave': { description: 'Abbandona un gruppo di ping specifico', syntax: 'leave <gruppo>', handler: leaveCommand },
@@ -24,7 +21,7 @@ const handlers = importModules(handlerDir);
 if (Object.keys(handlers).length > 0) {
     console.log(`Loaded ${Object.keys(handlers).length} custom command handlers:`);
     for (const [name, handler] of Object.entries(handlers)) {
-        AVAILABLE_COMMANDS[handler.commandName] = handler.command;
+        AVAILABLE_COMMANDS[handler.COMMAND_NAME] = handler.command;
         console.log(`- ${name}`);
     }
 } else {
@@ -67,10 +64,6 @@ async function helpCommand(client, message, args) {
         helpMessage = `Scrivi ${nconf.get("COMMAND_PREFIX")}help per un elenco dei comandi disponibili`;
     };
     await message.reply(helpMessage);
-};
-
-async function discordCommand(client, message, args) {
-    await message.reply(`Link al nostro server di Discord:\n${DISCORD_URL}\nℹ️ *Attenzione:* il server Discord non è ufficiale e non è affiliato ad alcuna organizzazione`);
 };
 
 async function groupsCommand(client, message, args) {
