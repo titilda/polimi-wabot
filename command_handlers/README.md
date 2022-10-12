@@ -15,6 +15,9 @@ command = {
  1. il client di WhatsApp Web (`WAWebJS.Client`)
  2. il messaggio che ha invocato il comando (`WAWebJS.Message`)
  3. un array contenente gli argomenti come stringhe (per comodità, in quanto non sempre è necessario operare direttamente sul messaggio)
+ 4. la classe di `nconf` con la configurazione del bot (`nconf.Provider`)
+
+Puoi mettere i moduli `handler_XXXXX.js` in sottodirectory, o inserire symlink a directory o moduli così da gestirli con repository totalmente separati.
 
 ## Esempio: handler_marco.js
 
