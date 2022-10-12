@@ -243,5 +243,10 @@ $RECYCLE.BIN/
 .wwebjs_auth/
 
 ### PoliMi Bot
-data.json
-*/handler_*.js
+/data.json
+
+/command_handlers/*
+!/command_handlers/README.md
+
+/keyword_handlers/*
+!/keyword_handlers/README.md

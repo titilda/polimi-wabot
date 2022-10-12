@@ -30,7 +30,7 @@ if (Object.keys(handlers).length > 0) {
 
 async function commandDispatcher(client, message, command, args) {
     if (AVAILABLE_COMMANDS[command]) {
-        await AVAILABLE_COMMANDS[command].handler(client, message, args);
+        await AVAILABLE_COMMANDS[command].handler(client, message, args, nconf);
     }
     else {
         await message.reply(`Comando non riconosciuto: ${nconf.get("COMMAND_PREFIX")}${command}. Scrivi ${nconf.get("COMMAND_PREFIX")}help per un elenco dei comandi disponibili`);

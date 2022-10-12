@@ -1,11 +1,15 @@
 fs = require('fs');
 
 function importModules(dir) {
-    const modules = {};
+    var modules = {};
     fs.readdirSync(dir).forEach(file => {
-        const name = file;
-        if (file.endsWith('.js')) {
-            modules[name] = require(`${dir}/${file}`);
+        path = fs.realpathSync(`${dir}/${file}`);
+        if (fs.lstatSync(path).isDirectory()) {
+            modules = Object.assign(modules, importModules(path));
+        } else {
+            if (file.endsWith('.js')) {
+                modules[file] = require(path);
+            }
         }
     });
     return modules;

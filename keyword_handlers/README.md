@@ -8,6 +8,8 @@ In questa directory, inserire moduli `handler_XXXXX.js` che esportano una costan
 
 La funzione deve riportare `true` in caso di successo.
 
+Puoi mettere i moduli `handler_XXXXX.js` in sottodirectory, o inserire symlink a directory o moduli così da gestirli con repository totalmente separati.
+
 ## Esempio: handler_dad_bot.js
 
 ```js
