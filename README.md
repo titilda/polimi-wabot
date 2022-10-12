@@ -16,7 +16,7 @@ sudo apt install -y gconf-service libgbm-dev libasound2 libatk1.0-0 libc6 libcai
 Puoi procedere dunque a clonare il repo e installare le dipendenze con `npm`
 
 ```sh
-git clone https://github.com/TheManchineel/polimi-wabot.git
+git clone https://github.com/titilda/polimi-wabot.git
 cd polimi-wabot
 npm install
 ```
