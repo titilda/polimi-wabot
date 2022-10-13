@@ -1,4 +1,4 @@
 #!/bin/bash
-$ENV=production
+$NODE_ENV=production
 cd "$(dirname "$0")"
 node ./app.js
