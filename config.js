@@ -14,7 +14,7 @@ switch (process.env.NODE_ENV) {
         configFile = './data.dev.json';
 }
 
-nconf.use('file', { file: CONFIG_FILE });
+nconf.use('file', { file: configFile });
 nconf.load();
 
 module.exports = {
