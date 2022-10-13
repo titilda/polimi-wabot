@@ -244,6 +244,7 @@ $RECYCLE.BIN/
 
 ### PoliMi Bot
 /data.json
+/data.dev.json
 
 /command_handlers/*
 !/command_handlers/README.md
