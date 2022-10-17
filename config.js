@@ -1,4 +1,5 @@
 var nconf = require('nconf');
+var fs = require('fs');
 
 var configFile
 
@@ -12,6 +13,12 @@ switch (process.env.NODE_ENV) {
         break;
     default:
         configFile = './data.dev.json';
+}
+
+// Check if file exists
+if (!fs.existsSync(configFile)) {
+    console.log(`Config file ${configFile} does not exist. Please create it.`);
+    process.exit(1);
 }
 
 nconf.use('file', { file: configFile });
