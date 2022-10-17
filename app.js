@@ -2,8 +2,12 @@ const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const { commandDispatcher } = require('./commands.js');
 const { getRandomJoinMessage } = require('./join_messages.js');
-const { keywordsHandler } = require('./keywords.js')
+const { keywordsHandler } = require('./keywords.js');
 const { nconf } = require('./config.js');
+
+const splash = "█▀█ █▀█ █░░ █ █▀▄▀█ █   █░█░█ ▄▀█   █▄▄ █▀█ ▀█▀\n█▀▀ █▄█ █▄▄ █ █░▀░█ █   ▀▄▀▄▀ █▀█   █▄█ █▄█ ░█░";
+
+console.log(splash);
 
 const client = new Client({
     authStrategy: new LocalAuth(),
