@@ -24,6 +24,10 @@ if (!fs.existsSync(configFile)) {
 nconf.use('file', { file: configFile });
 nconf.load();
 
+// Startup splash
+const splash = "█▀█ █▀█ █░░ █ █▀▄▀█ █   █░█░█ ▄▀█   █▄▄ █▀█ ▀█▀\n█▀▀ █▄█ █▄▄ █ █░▀░█ █   ▀▄▀▄▀ █▀█   █▄█ █▄█ ░█░\nBy Manchineel";
+
 module.exports = {
-    nconf: nconf
+    nconf: nconf,
+    splash: splash
 }

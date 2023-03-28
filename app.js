@@ -3,11 +3,9 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const { commandDispatcher } = require('./commands.js');
 const { getRandomJoinMessage } = require('./join_messages.js');
 const { keywordsHandler } = require('./keywords.js');
-const { nconf } = require('./config.js');
+const { nconf, splash } = require('./config.js');
 
-const splash = "█▀█ █▀█ █░░ █ █▀▄▀█ █   █░█░█ ▄▀█   █▄▄ █▀█ ▀█▀\n█▀▀ █▄█ █▄▄ █ █░▀░█ █   ▀▄▀▄▀ █▀█   █▄█ █▄█ ░█░";
-
-console.log(splash);
+var wwversion
 
 const client = new Client({
     authStrategy: new LocalAuth(),
@@ -25,7 +23,10 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
-client.initialize();
+client.initialize().then(
+    async () => {
+        wwversion = await client.getWWebVersion()
+    }).then(() => { console.log(`\n${splash}\n\nWhatsApp Web Version: ${wwversion}\nServer time: ${new Date().toISOString()}`) });
 
 async function logMessage(message) {
     const contact = await message.getContact();
@@ -54,8 +55,8 @@ function messageFilter(message) {
 async function onMessage(message) {
     if (messageFilter(message)) {
         await logMessage(message);
-        const contact = await message.getContact();
-        const chat = await message.getChat();
+        // const contact = await message.getContact();
+        // const chat = await message.getChat();
 
         if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
             const command = message.body.trim().split(' ')[0].slice(1);
