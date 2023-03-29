@@ -7,13 +7,15 @@ const { nconf, splash } = require('./config.js');
 
 var wwversion
 
-const client = new Client({
+var client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
         headless: true,
         args: ['--no-sandbox'],
     }
 });
+
+client.library = require('whatsapp-web.js') // this is a hack to make the library available to the commands
 
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
