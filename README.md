@@ -4,9 +4,11 @@ Un bot *utilissimo* per tutti gli amiœ di Informatica 2022-*2025* (si spera alm
 
 Pull request con funzioni o anche minchiate inutili sono benvenute al progetto!
 
-## Installazione
+## Installazione (Manuale)
 
-Sono richiesti Node.js (versione minima: ) ed `npm` sul sistema. Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
+**NOTA:** è consigliato usare Docker per l'installazione. Vedi [Installazione (Docker)](#installazione-docker).
+
+Per l'installazione manuale sono richiesti Node.js (v18+) ed `npm` sul sistema. Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
 
 ```shell
 sudo apt update
@@ -21,10 +23,10 @@ cd polimi-wabot
 npm install
 ```
 
-Devi copiare il file `example-data.json` con nome `data.json` ed impostare alcuni parametri:
+Devi copiare il file `data.json.example` con nome `data.json` ed impostare alcuni parametri:
 
 ```sh
-cp example-data.json data-json
+cp data.json.example data-json
 vim data.json
 ```
 
@@ -32,6 +34,7 @@ In particolare:
   * Una volta identificato l'ID delle chat/gruppi in cui intendi usarlo dai log dopo il primo avvio, inserisci tale ID nell'array `"CHAT_WHITELIST"`. Se il campo è vuoto, tutti i gruppi possono usare il bot (devi creare un gruppo per il testing, non puoi usare la chat diretta!)
   * Aggiusta `"COMMAND_PREFIX"` per non entrare in conflitto con altri bot
   * In `"groups"`, crea i gruppi desiderati (usa il modello esistente EXAMPLE). I nomi dei gruppi devono essere in MAIUSCOLO!
+  * Inserisci il tuo numero di telefono preceduto dal prefisso internazionale senza spazi o simboli (es. `393333333333`) in `"BOT_ADMINS"` per avere accesso ai comandi di amministrazione
 
 Infine, aggiusta i permessi su `start.sh` ed eseguilo per avviare il server:
 
@@ -40,9 +43,9 @@ chmod +x ./start.sh
 . start.sh
 ```
 
-Nel terminale dovrebbe apparire un QR code da scannerizzare con il tuo telefono usando WhatsApp Web. Attendi il messaggio `Client is ready!`, e procedi ad aggiungere il numero del bot ai gruppi in cui lo vuoi usare. Puoi vedere il `wid` delle chat con i messaggi in arrivo (es. `120363046745856669@g.us`) e aggiungerle come stringhe in `"CHAT_WHITELIST"` sul file di configurazione.
+Nel terminale dovrebbe apparire un QR code da scannerizzare con il tuo telefono usando WhatsApp Web. Attendi il messaggio `Client is ready!`, e procedi ad aggiungere il numero del bot ai gruppi in cui lo vuoi usare. Puoi vedere il `wid` delle chat con i messaggi in arrivo (es. `960323646540956661@g.us`) e aggiungerle come stringhe in `"CHAT_WHITELIST"` sul file di configurazione.
 
-Esempio di setup per uso come daemon (SystemD):
+### Esempio di setup per uso come daemon (SystemD):
 
 ```ini
 [Unit]
@@ -57,3 +60,44 @@ WorkingDirectory = /home/user/polimi-wabot/
 [Install]
 WantedBy = default.target
 ```
+
+## Installazione (Docker)
+
+Puoi installare il bot facilmente usando Docker. Per prima cosa, crea una cartella per i dati persistenti:
+
+```sh
+mkdir ./data/
+```
+
+Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) e copialo nella cartella dei dati persistenti.
+
+Infine esegui il container:
+
+```sh
+docker run -d
+    --name polimi-wabot \ 
+    -v ./data/:/app/data \
+    -e NODE_ENV=production \
+    --restart unless-stopped \
+    titilda/polimi-wabot
+```
+
+Consigliamo di usare Docker Compose anziché il comando `docker run` in produzione.
+
+Puoi creare un file `docker-compose.yml` nella cartella dei dati persistenti.
+
+Esempio di `docker-compose.yml`:
+```yaml
+version: "3.9"
+services:
+  polimi-wabot:
+    container_name: polimi-wabot
+    image: titilda/polimi-wabot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./data/:/app/data
+```
+
+Dopodiché puoi eseguire il container con `docker-compose up -d`.

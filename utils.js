@@ -1,5 +1,7 @@
 const fs = require('fs');
-const { Contact } = require('whatsapp-web.js');
+const { exec } = require('child_process');
+const constants = require('./constants.js');
+const { Client, Contact } = require('whatsapp-web.js');
 
 function importModules(dir) {
     var modules = {};
@@ -9,11 +11,28 @@ function importModules(dir) {
             modules = Object.assign(modules, importModules(path));
         } else {
             if (file.endsWith('.js')) {
-                modules[file] = require(path);
+                modules[path] = require(path);
             }
         }
     });
     return modules;
+}
+
+function importNpmPlugins() {
+    var plugins = {};
+    exec('npm list --depth=0 --json', (err, stdout, stderr) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        var npmList = JSON.parse(stdout);
+        for (const moduleName in Object.keys(npmList.dependencies)) {
+            if (moduleName.startsWith(constants.NPM_PLUGIN_PREFIX)) {
+                plugins[moduleName] = require(moduleName);
+            }
+        }
+    });
+    return plugins;
 }
 
 async function messageGroupAdminCheck(message) {
@@ -40,8 +59,23 @@ async function contactGroupAdminCheck(contact, chat) {
     }
 }
 
+async function contactBotAdminCheck(contact, nconf) {
+    var contactId
+    if (contact instanceof Contact) {
+        contactId = contact.id.user;
+    } else {
+        contactId = contact;
+    }
+    // check if contact is in the admin list in nconf
+    if (nconf.get("BOT_ADMINS").includes(contactId)) {
+        return true;
+    }
+}
+
 module.exports = {
     importModules: importModules,
+    importNpmPlugins: importNpmPlugins,
     contactGroupAdminCheck: contactGroupAdminCheck,
-    messageGroupAdminCheck: messageGroupAdminCheck
+    messageGroupAdminCheck: messageGroupAdminCheck,
+    contactBotAdminCheck: contactBotAdminCheck
 };

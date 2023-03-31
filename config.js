@@ -1,18 +1,18 @@
-var nconf = require('nconf');
-var fs = require('fs');
+const nconf = require('nconf');
+const fs = require('fs');
 
 var configFile
 
 // Check if ENV is production or development
 switch (process.env.NODE_ENV) {
     case 'production':
-        configFile = './data.json';
+        configFile = './data/data.json';
         break;
     case 'development':
-        configFile = './data.dev.json';
+        configFile = './data/data.dev.json';
         break;
     default:
-        configFile = './data.dev.json';
+        configFile = './data/data.dev.json';
 }
 
 // Check if file exists
@@ -25,9 +25,7 @@ nconf.use('file', { file: configFile });
 nconf.load();
 
 // Startup splash
-const splash = "█▀█ █▀█ █░░ █ █▀▄▀█ █   █░█░█ ▄▀█   █▄▄ █▀█ ▀█▀\n█▀▀ █▄█ █▄▄ █ █░▀░█ █   ▀▄▀▄▀ █▀█   █▄█ █▄█ ░█░\nBy Manchineel";
 
 module.exports = {
-    nconf: nconf,
-    splash: splash
+    nconf: nconf
 }

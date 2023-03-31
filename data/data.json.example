@@ -4,6 +4,7 @@
   "DISCORD_URL": "https://discord.gg/1234",
   "COMMAND_PREFIX": "/",
   "BLACKLIST": [],
+  "BOT_ADMINS": [],
   "groups": {
     "EXAMPLE": {
       "members": [],

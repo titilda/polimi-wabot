@@ -1,21 +1,26 @@
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const { commandDispatcher } = require('./commands.js');
 const { getRandomJoinMessage } = require('./join_messages.js');
-const { keywordsHandler } = require('./keywords.js');
-const { nconf, splash } = require('./config.js');
+const { nconf } = require('./config.js');
+const constants = require('./constants.js');
+const { Handlers } = require('./dispatchers.js');
 
 var wwversion
 
 var client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy: new LocalAuth(
+        options = {
+            dataPath: './data/.wwebjs_auth/'
+        }),
     puppeteer: {
         headless: true,
         args: ['--no-sandbox'],
     }
 });
 
-client.library = require('whatsapp-web.js') // this is a hack to make the library available to the commands
+const handlers = new Handlers();
+
+client.library = require('whatsapp-web.js') // this is a hack to make the WWebJS library available to the commands
 
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
@@ -28,7 +33,7 @@ client.on('ready', () => {
 client.initialize().then(
     async () => {
         wwversion = await client.getWWebVersion()
-    }).then(() => { console.log(`\n${splash}\n\nWhatsApp Web Version: ${wwversion}\nServer time: ${new Date().toISOString()}`) });
+    }).then(() => { console.log(`\n${constants.SPLASH}\n\nWhatsApp Web Version: ${wwversion}\nServer time: ${new Date().toISOString()}`) });
 
 async function logMessage(message) {
     const contact = await message.getContact();
@@ -64,7 +69,7 @@ async function onMessage(message) {
             const command = message.body.trim().split(' ')[0].slice(1);
             const args = message.body.trim().split(' ').slice(1);
             try {
-                await commandDispatcher(client, message, command, args);
+                await handlers.commandDispatcher(client, message, command, args, nconf);
             }
             catch (error) {
                 console.log(error);
@@ -72,7 +77,12 @@ async function onMessage(message) {
             };
         }
         else {
-            keywordsHandler(client, message);
+            try {
+                handlers.keywordDispatcher(client, message, nconf);
+            }
+            catch (error) {
+                console.log(error);
+            }
         };
     };
 };
@@ -82,7 +92,7 @@ async function onGroupJoin(groupNotification) {
     const participant = groupNotification.id.participant;
     const chat_id = chat.id._serialized;
     if (nconf.get("CHAT_WHITELIST").includes(chat_id)) {
-        const replyMessage = `${getRandomJoinMessage()}\n\nCiao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}! ${nconf.get("DISCORD_URL")} è il nostro server Discord.\n⚠️ Questo bot, così come il server Discord, non è ufficiale e non è affiliato ad alcuna organizzazione, inclusa PoliNetwork.`
+        const replyMessage = `${getRandomJoinMessage()}\n\nCiao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}!\n${nconf.get("DISCORD_URL")} è il nostro server Discord`
         const mentions = { id: { _serialized: participant } };
         await groupNotification.reply(replyMessage, { mentions: [mentions] });
     }

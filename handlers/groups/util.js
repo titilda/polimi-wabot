@@ -1,6 +1,4 @@
-var { nconf } = require('./config.js');
-
-function getGroups(showHidden = false) {
+function getGroups(nconf, showHidden = false) {
     let groups = [];
     for (let group in nconf.get('groups')) {
         if (nconf.get('groups')[group].visible || showHidden) {
@@ -10,22 +8,22 @@ function getGroups(showHidden = false) {
     return groups;
 };
 
-function getGroupMembers(group) {
+function getGroupMembers(nconf, group) {
     return nconf.get('groups')[group]["members"];
 };
 
-function getGroupsWithMember(member) {
-    const groups = getGroups();
+function getGroupsWithMember(nconf, member) {
+    const groups = getGroups(nconf);
     const groupsWithMember = [];
     for (let group of groups) {
-        if (getGroupMembers(group).includes(member)) {
+        if (getGroupMembers(nconf, group).includes(member)) {
             groupsWithMember.push(group);
         };
     };
     return groupsWithMember;
 };
 
-function addMemberToGroup(group, member, privileged = false) {
+function addMemberToGroup(nconf, group, member, privileged = false) {
     if (!nconf.get('groups')[group]["joinable"] && !privileged) {
         return false;
     };
@@ -34,7 +32,7 @@ function addMemberToGroup(group, member, privileged = false) {
     return true;
 };
 
-function removeMemberFromGroup(group, member, privileged = false) {
+function removeMemberFromGroup(nconf, group, member, privileged = false) {
     if (!nconf.get('groups')[group]["leavable"] && !privileged) {
         return false;
     };

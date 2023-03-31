@@ -239,15 +239,7 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,node,visualstudiocode
 
-### WWebJS ###
-.wwebjs_auth/
-
 ### PoliMi Bot
-/data.json
-/data.dev.json
-
-/command_handlers/*
-!/command_handlers/README.md
-
-/keyword_handlers/*
-!/keyword_handlers/README.md
+/data/*
+!/data/data.json.example
+/plugins/*.js
