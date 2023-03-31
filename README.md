@@ -66,7 +66,7 @@ WantedBy = default.target
 Puoi installare il bot facilmente usando Docker. Per prima cosa, crea una cartella per i dati persistenti:
 
 ```sh
-mkdir ./data/
+mkdir -p /path/to/data/
 ```
 
 Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) e copialo nella cartella dei dati persistenti.
@@ -76,7 +76,7 @@ Infine esegui il container:
 ```sh
 docker run -d
     --name polimi-wabot \ 
-    -v ./data/:/app/data \
+    -v /path/to/data/:/app/data \
     -e NODE_ENV=production \
     --restart unless-stopped \
     titilda/polimi-wabot
@@ -97,7 +97,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ./data/:/app/data
+      - /path/to/data/:/app/data
 ```
 
 Dopodiché puoi eseguire il container con `docker-compose up -d`.
