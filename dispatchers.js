@@ -84,7 +84,7 @@ class Handlers {
     async keywordDispatcher(client, message, nconf) {
         for (const keyword of this.keywords) {
             const matches = message.body.match(keyword.regex);
-            if (matches.length) await keyword.handler(client, message, matches, nconf);
+            if (matches) await keyword.handler(client, message, matches, nconf);
         }
     }
 }
