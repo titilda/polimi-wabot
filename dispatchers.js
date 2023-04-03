@@ -12,7 +12,7 @@ class Handlers {
         let handlers = {};
 
         Object.assign(handlers, importModules('./handlers/'));
-        Object.assign(handlers, importModules('./plugins/'));
+        Object.assign(handlers, importModules('./plugins/', true /* reloads the plugins from disk */));
         Object.assign(handlers, importNpmPlugins());
 
 

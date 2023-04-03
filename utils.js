@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const constants = require('./constants.js');
 const { Client, Contact } = require('whatsapp-web.js');
 
-function importModules(dir) {
+function importModules(dir, reload = false) {
     var modules = {};
     fs.readdirSync(dir).forEach(file => {
         path = fs.realpathSync(`${dir}/${file}`);
@@ -11,6 +11,9 @@ function importModules(dir) {
             modules = Object.assign(modules, importModules(path));
         } else {
             if (file.endsWith('.js')) {
+                if (reload) {
+                    delete require.cache[require.resolve(path)];
+                }
                 modules[path] = require(path);
             }
         }

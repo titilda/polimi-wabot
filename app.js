@@ -66,8 +66,9 @@ async function onMessage(message) {
         // const chat = await message.getChat();
 
         if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
-            const command = message.body.trim().split(' ')[0].slice(1);
-            const args = message.body.trim().split(' ').slice(1);
+            const slices = message.body.replace(/\s+/g, " ").trim().split(' ');
+            const command = slices[0].slice(1);
+            const args = slices.slice(1);
             try {
                 await handlers.commandDispatcher(client, message, command, args, nconf);
             }
