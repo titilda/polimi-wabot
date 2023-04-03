@@ -69,7 +69,7 @@ Puoi installare il bot facilmente usando Docker. Per prima cosa, crea una cartel
 mkdir -p /path/to/data/
 ```
 
-Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) ([link al template](data/data.json.example)) presente in e copialo nella cartella dei dati persistenti.
+Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) ([link al template](data/data.json.example)) e copialo nella cartella dei dati persistenti.
 
 Infine esegui il container:
 
