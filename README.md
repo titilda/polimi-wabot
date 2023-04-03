@@ -23,11 +23,11 @@ cd polimi-wabot
 npm install
 ```
 
-Devi copiare il file `data.json.example` con nome `data.json` ed impostare alcuni parametri:
+Devi copiare il file `data.json.example` presente in `data` con il nome `data.json` ed impostare alcuni parametri:
 
 ```sh
-cp data.json.example data-json
-vim data.json
+cp data/data.json.example data/data.json
+vim data/data.json
 ```
 
 In particolare:
@@ -69,7 +69,7 @@ Puoi installare il bot facilmente usando Docker. Per prima cosa, crea una cartel
 mkdir -p /path/to/data/
 ```
 
-Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) e copialo nella cartella dei dati persistenti.
+Crea un file `data.json` come descritto nella sezione [Installazione (Manuale)](#installazione-manuale) ([link al template](data/data.json.example)) presente in e copialo nella cartella dei dati persistenti.
 
 Infine esegui il container:
 
@@ -79,7 +79,7 @@ docker run -d
     -v /path/to/data/:/app/data \
     -e NODE_ENV=production \
     --restart unless-stopped \
-    titilda/polimi-wabot
+    manchineel/polimi-wabot
 ```
 
 Consigliamo di usare Docker Compose anziché il comando `docker run` in produzione.
@@ -92,7 +92,7 @@ version: "3.9"
 services:
   polimi-wabot:
     container_name: polimi-wabot
-    image: titilda/polimi-wabot
+    image: manchineel/polimi-wabot
     restart: unless-stopped
     environment:
       - NODE_ENV=production
