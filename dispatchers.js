@@ -11,7 +11,12 @@ class Handlers {
         this.keywords = [];
         let handlers = {};
 
-        Object.assign(handlers, importModules('./handlers/'));
+        console.log("Loading handlers...");
+        const devMode = process.env.NODE_ENV === 'development';
+        if (devMode) {
+            console.log("Development mode enabled - handlers will be reloaded from disk");
+        }
+        Object.assign(handlers, importModules('./handlers/', devMode /* reloads the handlers from disk in development mode */));
         Object.assign(handlers, importModules('./plugins/', true /* reloads the plugins from disk */));
         Object.assign(handlers, importNpmPlugins());
 

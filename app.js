@@ -43,6 +43,7 @@ async function logMessage(message) {
 
 function messageFilter(message) {
     if (message.type !== 'chat') {
+        console.log(`Message of type ${message.type} from ${message.from} filtered out`);
         return false;
     };
     if (Object.keys(nconf.get("CHAT_WHITELIST")).length === 0) {

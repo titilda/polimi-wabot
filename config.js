@@ -12,7 +12,7 @@ switch (process.env.NODE_ENV) {
         configFile = './data/data.dev.json';
         break;
     default:
-        configFile = './data/data.dev.json';
+        configFile = './data/data.json';
 }
 
 // Check if file exists
