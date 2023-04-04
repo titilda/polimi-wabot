@@ -1,5 +1,3 @@
-var fs = require('fs');
-
 const SUPPORTED_MIME_TYPES = [
     "image/jpeg",
     "image/jpg",
