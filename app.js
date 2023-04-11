@@ -63,30 +63,28 @@ function messageFilter(message) {
 async function onMessage(message) {
     if (messageFilter(message)) {
         await logMessage(message);
-        // const contact = await message.getContact();
-        // const chat = await message.getChat();
-
-        if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
-            const slices = message.body.replace(/\s+/g, " ").trim().split(' ');
-            const command = slices[0].slice(1);
-            const args = slices.slice(1);
-            try {
+        try {
+            if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
+                const slices = message.body.replace(/\s+/g, " ").trim().split(' ');
+                const command = slices[0].slice(1);
+                const args = slices.slice(1);
                 await handlers.commandDispatcher(client, message, command, args, nconf);
             }
-            catch (error) {
-                console.log(error);
-                message.reply(`Siamo spiacenti, si è verificato un errore interno del server. Riprova più tardi.\n${new Date().toISOString()}`);
-            };
-        }
-        else {
-            try {
+            else {
                 handlers.keywordDispatcher(client, message, nconf);
             }
-            catch (error) {
-                console.log(error);
+        }
+        catch (error) {
+            const timestamp = new Date().toISOString()
+            console.log(`++++++++++++++ USER ENCOUNTERED ERROR AT ${timestamp}: ++++++++++++++\n${error}`);
+            try {
+                message.reply(`Siamo spiacenti, si è verificato un errore interno del server. Riprova più tardi.\n${timestamp}`)
             }
-        };
-    };
+            catch (sendError) {
+                console.log(`ERROR WHILE REPORTING ERROR TO USER:\n${sendError}`)
+            }
+        }
+    }
 };
 
 async function onGroupJoin(groupNotification) {
@@ -104,6 +102,9 @@ async function onGroupJoin(groupNotification) {
 client.on('message', onMessage);
 
 client.on('group_join', onGroupJoin)
+
+// TO BE IMPLEMENTED: reaction handler
+// client.on('message_reaction', console.log)
 
 client.on('disconnected', () => {
     console.log('Disconnected!');

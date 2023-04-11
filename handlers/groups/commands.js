@@ -1,4 +1,5 @@
-const { addMemberToGroup, removeMemberFromGroup, getGroups, getGroupMembers, getGroupsWithMember } = require('./util.js');
+const { groupChatCheck, addMemberToGroup, removeMemberFromGroup, getGroups, getGroupMembers, getGroupsWithMember } = require('./util.js');
+
 
 const commands = {
     'groups': {
@@ -6,6 +7,8 @@ const commands = {
         syntax: "groups",
         handler:
             async (client, message, args, nconf) => {
+                if (!await groupChatCheck(message)) return;
+
                 var replyMessage = 'Gruppi di ping disponibili:';
                 var groups = getGroups(nconf);
                 for (let group of groups) {
@@ -19,6 +22,8 @@ const commands = {
         syntax: "join <gruppo>",
         handler:
             async (client, message, args, nconf) => {
+                if (!await groupChatCheck(message)) return;
+
                 if (args.length == 0) {
                     await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}join <gruppo> per unirti a un gruppo di ping`);
                 }
@@ -72,6 +77,8 @@ const commands = {
         syntax: "leave <gruppo>",
         handler:
             async (client, message, args, nconf) => {
+                if (!await groupChatCheck(message)) return;
+
                 if (args.length == 0) {
                     await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}leave <gruppo> per abbandonare un gruppo di ping`);
                 }
@@ -85,7 +92,7 @@ const commands = {
                         group = group.toUpperCase();
                         if (getGroups(nconf).includes(group)) {
                             const contact = await message.getContact();
-                            if (getGroupMembers(group).includes(contact.id.user)) {
+                            if (getGroupMembers(nconf, group).includes(contact.id.user)) {
                                 removeMemberFromGroup(nconf, group, contact.id.user);
                                 successfullyRemoved.push(group);
                             }
@@ -121,6 +128,11 @@ const commands = {
         syntax: "mygroups",
         handler:
             async (client, message, args, nconf) => {
+                if (!message.getChat().then(chat => chat.isGroup)) {
+                    await message.reply("Questo comando è disponibile solo in chat di gruppo");
+                    return;
+                };
+
                 switch (args.length) {
                     case 0:
                         const contact = await message.getContact();
@@ -142,46 +154,61 @@ const commands = {
         syntax: "ping <gruppo>",
         handler:
             async (client, message, args, nconf) => {
+                if (!await groupChatCheck(message)) return;
+
                 if (args.length == 0) {
                     await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}ping <gruppo> per pingare un gruppo`);
+                    return;
                 }
-                else {
-                    let successfullyPinged = [];
-                    let unsuccessfullyPinged = [];
-                    let replyMessageLines = [];
 
-                    for (let group of args) {
-                        group = group.toUpperCase();
-                        if (getGroups(nconf).includes(group)) {
-                            const members = getGroupMembers(nconf, group);
-                            if (members.length > 0) {
-                                successfullyPinged.push(group);
-                                for (let member of members) {
-                                    const contact = await client.getContactById(member + "@c.us");
-                                    await contact.sendMessage(`Ping da ${message.from}: ${message.body}`);
-                                };
+                const sourceChat = await message.getChat();
+                const sourceContact = await message.getContact();
+                const sourceParticipants = sourceChat.participants.map((participant) => { return participant.id.user });
+                const sourceChatName = sourceChat.name;
+                let successfullyPinged = [];
+                let unsuccessfullyPinged = [];
+                let replyMessageLines = [];
+                let alreadyPinged = [];
+
+                for (let group of args) {
+                    group = group.toUpperCase();
+                    if (getGroups(nconf).includes(group)) {
+                        const members = getGroupMembers(nconf, group);
+                        if (members.length > 0) {
+                            const replyMessage = `Ping da ${sourceContact.pushname} su \`\`\`${sourceChatName}\`\`\` (gruppo *${group}*)\n\nUsa ${nconf.get("COMMAND_PREFIX")}leave nella chat del gruppo su cui sei stato pingato, seguito dal nome del gruppo di ping, per non ricevere più questi messaggi. Puoi altrimenti uscire dalla chat del gruppo.`;
+                            successfullyPinged.push(group);
+                            for (let member of members) {
+                                const contact = await client.getContactById(member + "@c.us");
+                                console.log(contact.id.user)
+                                if (sourceParticipants.includes(contact.id.user) && !alreadyPinged.includes(contact.id.user)) {
+                                    alreadyPinged.push(contact.id.user);
+                                    try { await contact.getChat().then(async (targetChat) => { message.reply(replyMessage, targetChat.id._serialized) }); }
+                                    catch (error) { console.log(error) };
+
+                                }
                             }
-                            else {
-                                unsuccessfullyPinged.push(group);
-                            };
                         }
-                        else { unsuccessfullyPinged.push(group) };
-                    };
-                    if (successfullyPinged.length == 1) {
-                        replyMessageLines.push(`Pingato gruppo: ${successfullyPinged.join(', ')}`);
+                        else {
+                            unsuccessfullyPinged.push(group);
+                        };
                     }
-                    else if (successfullyPinged.length > 1) {
-                        replyMessageLines.push(`Pingati gruppi: ${successfullyPinged.join(', ')}`);
-                    };
-
-                    if (unsuccessfullyPinged.length == 1) {
-                        replyMessageLines.push(`Gruppo non trovato o vuoto: ${unsuccessfullyPinged.join(', ')}`);
-                    }
-                    else if (unsuccessfullyPinged.length > 1) {
-                        replyMessageLines.push(`Gruppi non trovati o vuoti: ${unsuccessfullyPinged.join(', ')}`);
-                    };
-                    await message.reply(replyMessageLines.join('\n'));
+                    else { unsuccessfullyPinged.push(group) };
                 };
+                if (successfullyPinged.length == 1) {
+                    replyMessageLines.push(`Pingato gruppo: ${successfullyPinged.join(', ')}`);
+                }
+                else if (successfullyPinged.length > 1) {
+                    replyMessageLines.push(`Pingati gruppi: ${successfullyPinged.join(', ')}`);
+                };
+
+                if (unsuccessfullyPinged.length == 1) {
+                    replyMessageLines.push(`Gruppo non trovato o vuoto: ${unsuccessfullyPinged.join(', ')}`);
+                }
+                else if (unsuccessfullyPinged.length > 1) {
+                    replyMessageLines.push(`Gruppi non trovati o vuoti: ${unsuccessfullyPinged.join(', ')}`);
+                };
+                await message.reply(replyMessageLines.join('\n'));
+
             }
     },
     'list': {
@@ -189,6 +216,8 @@ const commands = {
         syntax: "list <gruppo>",
         handler:
             async (client, message, args, nconf) => {
+                if (!await groupChatCheck(message)) return;
+
                 if (args.length !== 1) {
                     await message.reply(`Scrivi ${nconf.get("COMMAND_PREFIX")}list <gruppo> per elencare i membri del gruppo`);
                     return;

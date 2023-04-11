@@ -1,3 +1,9 @@
+groupChatCheck = async (message) =>
+    message.getChat().then((chat) => {
+        if (!chat.isGroup) message.reply("Questo comando è disponibile solo in chat di gruppo")
+        return chat.isGroup
+    })
+
 function getGroups(nconf, showHidden = false) {
     let groups = [];
     for (let group in nconf.get('groups')) {
@@ -45,6 +51,7 @@ function removeMemberFromGroup(nconf, group, member, privileged = false) {
 };
 
 module.exports = {
+    groupChatCheck: groupChatCheck,
     getGroups: getGroups,
     getGroupMembers: getGroupMembers,
     addMemberToGroup: addMemberToGroup,
