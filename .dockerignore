@@ -239,6 +239,9 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,node,visualstudiocode
 
+### Git
+/.git/
+
 ### PoliMi Bot
 /data/*
 !/data/data.json.example
