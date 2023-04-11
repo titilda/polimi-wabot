@@ -1,17 +1,14 @@
-const SUPPORTED_MIME_TYPES = [
-    "image/jpeg",
-    "image/jpg",
-    "image/png"
-];
+const { SUPPORTED_MIME_TYPES } = require("./constants.js")
 
 const commands = {
     "stickerthis": {
         description: "Crea uno sticker da un'immagine",
         syntax: "stickerthis [(a capo) autore] [(a capo) nome del pacchetto]",
         handler: async (client, message, args, nconf) => {
-            media = await message.getQuotedMessage()
+            const mediaMessage = await message.getQuotedMessage()
+            let media;
             try {
-                media = await media.downloadMedia();
+                media = await mediaMessage.downloadMedia();
             }
             catch (err) {
                 await message.reply("Devi rispondere ad un messaggio con un'immagine!");
@@ -19,6 +16,10 @@ const commands = {
             }
             if (!SUPPORTED_MIME_TYPES.includes(media.mimetype)) {
                 await message.reply("Devi rispondere ad un messaggio con un'immagine in formato JPEG o PNG!");
+                return;
+            }
+            if (mediaMessage._data.isViewOnce) {
+                await message.reply("Non puoi creare uno sticker da un'immagine visibile una sola volta 👀")
                 return;
             }
 
