@@ -1,7 +1,8 @@
 const SUPPORTED_MIME_TYPES = [
     "image/jpeg",
     "image/jpg",
-    "image/png"
+    "image/png",
+    "video/mp4"
 ];
 
 module.exports = {

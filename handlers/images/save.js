@@ -1,15 +1,15 @@
 const { SUPPORTED_MIME_TYPES } = require("./constants.js")
 // const { contactGroupAdminCheck } = require("../../utils.js")
 
-const VIEW_ONLY_ONCE_MSG = "Devi rispondere ad un messaggio con un'immagine visibile una sola volta!";
-const VIEW_ONLY_ONCE_FORMAT_MSG = "Devi rispondere ad un messaggio con un'immagine visibile una sola volta in formato JPEG o PNG!";
-const NO_LONGER_AVAILABLE_MSG = "Siamo spiacenti, questo messaggio non è più disponibile su WhatsApp e non può essere salvato.\nI media visibili una sola volta vengono eliminati dal server dopo 14 giorni.";
+const VIEW_ONLY_ONCE_MSG = "Devi rispondere ad un messaggio con un media visibile una sola volta!";
+const VIEW_ONLY_ONCE_FORMAT_MSG = "Devi rispondere ad un messaggio con una foto o video!";
+const NO_LONGER_AVAILABLE_MSG = "Siamo spiacenti, questo messaggio non è più disponibile su WhatsApp e non può essere salvato.\nLe immagini visibili una sola volta vengono eliminate dal server entro 14 giorni, e i video potrebbero essere rimossi dopo un solo download.";
 const SAVED_REACTION_EMOJI = "💾";
 const CONFIRMATION_REACTION_EMOJI = "✅";
 
 const commands = {
     "save": {
-        description: "Salva un'immagine visibile \"una sola volta\". I partecipanti della chat potranno vedere che l'immagine è stata salvata.",
+        description: "Salva un contenuto multimediale visibile \"una sola volta\". I partecipanti della chat potranno vedere che l'immagine è stata salvata.",
         syntax: "save",
         handler: async (client, message, args, nconf) => {
             const mediaMessage = await message.getQuotedMessage()
@@ -26,6 +26,7 @@ const commands = {
                 return;
             }
             if (!SUPPORTED_MIME_TYPES.includes(media.mimetype)) {
+                console.log(`Unsupported MIME type: ${media.mimetype}`);
                 await message.reply(VIEW_ONLY_ONCE_FORMAT_MSG);
                 return;
             }
@@ -41,7 +42,7 @@ const commands = {
                 .then(async targetChat => mediaMessage.reply(
                     media,
                     targetChat.id._serialized,
-                    { caption: `Immagine salvata da \`\`\`${sourceChat.name}\`\`\`` }
+                    { caption: `Contenuto salvato da \`\`\`${sourceChat.name}\`\`\`` + (typeof mediaMessage._data.caption !== "undefined" ? `\n\nDidascalia:\n\`\`\`${mediaMessage._data.caption}\`\`\`` : "") }
                 ));
 
             await mediaMessage.react(SAVED_REACTION_EMOJI);

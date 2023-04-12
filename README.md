@@ -8,7 +8,7 @@ Pull request con funzioni o anche minchiate inutili sono benvenute al progetto!
 
 **NOTA:** è consigliato usare Docker per l'installazione. Vedi [Installazione (Docker)](#installazione-docker).
 
-Per l'installazione manuale sono richiesti Node.js (v18+) ed `npm` sul sistema. Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
+Per l'installazione manuale **sono richiesti Node.js (v18+), Google Chrome (*NON* Chromium) ed `npm` sul sistema.** Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
 
 ```shell
 sudo apt update
@@ -44,6 +44,8 @@ chmod +x ./start.sh
 ```
 
 Nel terminale dovrebbe apparire un QR code da scannerizzare con il tuo telefono usando WhatsApp Web. Attendi il messaggio `Client is ready!`, e procedi ad aggiungere il numero del bot ai gruppi in cui lo vuoi usare. Puoi vedere il `wid` delle chat con i messaggi in arrivo (es. `960323646540956661@g.us`) e aggiungerle come stringhe in `"CHAT_WHITELIST"` sul file di configurazione.
+
+**NOTA:** senza Google Chrome installato, il bot proverà a usare Chromium. Chromium non supporta l'elaborazione di video (vedi [qui](https://wwebjs.dev/guide/handling-attachments.html#caveat-for-sending-videos-and-gifs)), peranto compariranno dei messaggi di errore se si tentano di eseguire comandi su video.
 
 ### Esempio di setup per uso come daemon (SystemD):
 

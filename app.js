@@ -1,7 +1,7 @@
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const { getRandomJoinMessage } = require('./join_messages.js');
-const { nconf } = require('./config.js');
+const { nconf, getBrowserPath } = require('./config.js');
 const constants = require('./constants.js');
 const { Handlers } = require('./dispatchers.js');
 
@@ -14,6 +14,7 @@ var client = new Client({
         }),
     puppeteer: {
         headless: true,
+        executablePath: getBrowserPath(),
         args: ['--no-sandbox'],
     }
 });
