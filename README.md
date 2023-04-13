@@ -8,7 +8,7 @@ Pull request con funzioni o anche minchiate inutili sono benvenute al progetto!
 
 **NOTA:** è consigliato usare Docker per l'installazione. Vedi [Installazione (Docker)](#installazione-docker).
 
-Per l'installazione manuale **sono richiesti Node.js (v18+), Google Chrome (*NON* Chromium) ed `npm` sul sistema.** Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
+Per l'installazione manuale sono richiesti Node.js (v18+), [Google Chrome](https://www.google.com/chrome/) (*NON* Chromium), [`ffmpeg`](https://ffmpeg.org/) ed [`npm`](https://www.npmjs.com/) sul sistema. Se sei su un sistema senza interfaccia grafica/headless (ad esempio un Linux Server), devi prima installare [alcuni pacchetti](https://wwebjs.dev/guide/#installation-on-no-gui-systems) — esempio per Ubuntu Linux:
 
 ```shell
 sudo apt update
@@ -81,7 +81,7 @@ docker run -d
     -v /path/to/data/:/app/data \
     -e NODE_ENV=production \
     --restart unless-stopped \
-    manchineel/polimi-wabot
+    titilda/polimi-wabot
 ```
 
 Consigliamo di usare Docker Compose anziché il comando `docker run` in produzione.
@@ -94,7 +94,7 @@ version: "3.9"
 services:
   polimi-wabot:
     container_name: polimi-wabot
-    image: manchineel/polimi-wabot
+    image: titilda/polimi-wabot
     restart: unless-stopped
     environment:
       - NODE_ENV=production
