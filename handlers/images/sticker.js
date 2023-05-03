@@ -3,7 +3,7 @@ const { SUPPORTED_MIME_TYPES } = require("./constants.js")
 const commands = {
     "stickerthis": {
         description: "Crea uno sticker da un'immagine",
-        syntax: "stickerthis [(a capo) autore] [(a capo) nome del pacchetto]",
+        syntax: "stickerthis [(a capo) nome del pacchetto] [(a capo) autore]",
         handler: async (client, message, args, nconf) => {
             const mediaMessage = await message.getQuotedMessage()
             let media;
@@ -26,8 +26,8 @@ const commands = {
             chat = await message.getChat();
 
             followingLines = message.body.split("\n", 3).slice(1);
-            stickerAuthor = (followingLines[0] !== undefined && followingLines[0].trim().length > 0) ? followingLines[0] : "titilda";
-            stickerName = (followingLines[1] !== undefined && followingLines[1].trim().length > 0) ? followingLines[1] : "polimi-wabot";
+            stickerName = (followingLines[0] !== undefined && followingLines[0].trim().length > 0) ? followingLines[0] : "polimi-wabot";
+            stickerAuthor = (followingLines[1] !== undefined && followingLines[1].trim().length > 0) ? followingLines[1] : "titilda";
 
             chat.sendMessage(media, { sendMediaAsSticker: true, stickerAuthor: stickerAuthor, stickerName: stickerName });
         }
