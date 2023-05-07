@@ -21,12 +21,7 @@ jobs:
     - name: Get current date
       run: |
         echo "NOW=$(date '+%Y-%m-%dT%H_%M_%SZ')" >> $GITHUB_ENV
-    - name: Build the Docker image
+    - name: Build the Docker image and push to Docker Hub
       env:
         DOCKER_USER: ${{secrets.DOCKER_USER}}
-      run: docker build . --file Dockerfile --tag ${DOCKER_USER}/polimi-wabot:${NOW} --tag ${DOCKER_USER}/polimi-wabot:latest
-    - name: Push to Docker Hub registry
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-      run: |
-        docker push ${DOCKER_USER}/polimi-wabot --all-tags
+      run: docker buildx build . --file Dockerfile --tag ${DOCKER_USER}/polimi-wabot:${NOW} --tag ${DOCKER_USER}/polimi-wabot:latest --platform linux/amd64,linux/arm64 --push
