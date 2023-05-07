@@ -1,4 +1,4 @@
-FROM ghcr.io/puppeteer/puppeteer:19.8.5
+FROM ghcr.io/puppeteer/puppeteer:20.1.1
 USER root
 WORKDIR /app
 COPY . .
