@@ -31,6 +31,25 @@ const commands = {
 
             chat.sendMessage(media, { sendMediaAsSticker: true, stickerAuthor: stickerAuthor, stickerName: stickerName });
         }
+    },
+    "destickerthis": {
+        description: "Crea un'immagine da uno sticker",
+        syntax: "destickerthis",
+        handler: async (client, message, args, nconf) => {
+            const mediaMessage = await message.getQuotedMessage()
+            if (mediaMessage.type !== "sticker") {
+                await message.reply("Devi rispondere ad uno sticker!");
+                return;
+            }
+            let media;
+            try {
+                media = await mediaMessage.downloadMedia();
+            }
+            catch (err) {
+                throw err("Errore durante il download dello sticker");
+            }
+            await message.reply(media);
+        }
     }
 };
 
