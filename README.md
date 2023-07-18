@@ -1,5 +1,7 @@
 # PoliMi WA Bot
 
+<img src="assets/polimi-wabot Logo.svg" alt="polimi-wabot Logo" width="200"/>
+
 Un bot *utilissimo* per tutti gli amiœ di Informatica 2022-*2025* (si spera almeno). Basato (basato) su [whatsapp-web.js](https://wwebjs.dev/).
 
 Pull request con funzioni o anche minchiate inutili sono benvenute al progetto!
