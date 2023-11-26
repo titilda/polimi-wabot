@@ -10,8 +10,9 @@ var wwversion
 var client = new Client({
     authStrategy: new LocalAuth(
         options = {
-            dataPath: './data/.wwebjs_auth/'
+            dataPath: './data/.wwebjs_auth/',
         }),
+    webVersion: '2.2350.52',
     puppeteer: {
         headless: true,
         executablePath: getBrowserPath(),
@@ -61,32 +62,24 @@ function messageFilter(message) {
     };
 };
 
+async function errorHandler(error) {
+    const timestamp = new Date().toISOString()
+    console.log(`++++++++++++++ USER ENCOUNTERED ERROR AT ${timestamp}: ++++++++++++++\n${error}`);
+}
+
 async function onMessage(message) {
     if (messageFilter(message)) {
         await logMessage(message);
-        try {
-            if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
-                const slices = message.body.replace(/\s+/g, " ").trim().split(' ');
-                const command = slices[0].slice(1);
-                const args = slices.slice(1);
-                await handlers.commandDispatcher(client, message, command, args, nconf);
-            }
-            else {
-                handlers.keywordDispatcher(client, message, nconf);
-            }
+        if (message.body.trim().startsWith(nconf.get("COMMAND_PREFIX"))) {
+            const slices = message.body.replace(/\s+/g, " ").trim().split(' ');
+            const command = slices[0].slice(1);
+            const args = slices.slice(1);
+            handlers.commandDispatcher(client, message, command, args, nconf).catch(errorHandler);
         }
-        catch (error) {
-            const timestamp = new Date().toISOString()
-            console.log(`++++++++++++++ USER ENCOUNTERED ERROR AT ${timestamp}: ++++++++++++++\n${error}`);
-            try {
-                message.reply(`Siamo spiacenti, si è verificato un errore interno del server. Riprova più tardi.\n${timestamp}`)
-            }
-            catch (sendError) {
-                console.log(`ERROR WHILE REPORTING ERROR TO USER:\n${sendError}`)
-            }
-        }
+        else
+            handlers.keywordDispatcher(client, message, nconf).catch(errorHandler);
     }
-};
+}
 
 async function onGroupJoin(groupNotification) {
     const chat = await groupNotification.getChat();

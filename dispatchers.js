@@ -79,7 +79,7 @@ class Handlers {
     }
     async commandDispatcher(client, message, command, args, nconf) {
         if (this.commands[command]) {
-            await this.commands[command].handler(client, message, args, nconf);
+            this.commands[command].handler(client, message, args, nconf).catch((error) => { console.log(error) });
         }
         else {
             await message.reply(`Comando non riconosciuto: ${nconf.get("COMMAND_PREFIX")}${command}. Scrivi ${nconf.get("COMMAND_PREFIX")}help per un elenco dei comandi disponibili`);
