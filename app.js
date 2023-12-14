@@ -1,9 +1,11 @@
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
+
+const constants = require('./constants.js');
 const { getRandomJoinMessage } = require('./join_messages.js');
 const { nconf, getBrowserPath } = require('./config.js');
-const constants = require('./constants.js');
 const { Handlers } = require('./dispatchers.js');
+const { WebAPI } = require('./web_api.js');
 
 var wwversion
 
@@ -32,17 +34,6 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
-client.initialize().then(
-    async () => {
-        wwversion = await client.getWWebVersion()
-    }).then(() => { console.log(`\n${constants.SPLASH}\n\nWhatsApp Web Version: ${wwversion}\nServer time: ${new Date().toISOString()}`) });
-
-async function logMessage(message) {
-    const contact = await message.getContact();
-    const chat = await message.getChat();
-    console.log(`${new Date().toISOString()} ${contact.pushname} (${contact.id.user} @ ${message.from}): ${message.body}`);
-};
-
 function messageFilter(message) {
     if (message.type !== 'chat') {
         console.log(`Message of type ${message.type} from ${message.from} filtered out`);
@@ -67,6 +58,12 @@ async function errorHandler(error) {
     console.log(`++++++++++++++ USER ENCOUNTERED ERROR AT ${timestamp}: ++++++++++++++\n${error}`);
 }
 
+async function logMessage(message) {
+    const contact = await message.getContact();
+    const chat = await message.getChat();
+    console.log(`${new Date().toISOString()} ${contact.pushname} (${contact.id.user} @ ${message.from}): ${message.body}`);
+};
+
 async function onMessage(message) {
     if (messageFilter(message)) {
         await logMessage(message);
@@ -86,7 +83,7 @@ async function onGroupJoin(groupNotification) {
     const participant = groupNotification.id.participant;
     const chat_id = chat.id._serialized;
     if (nconf.get("CHAT_WHITELIST").includes(chat_id)) {
-        const replyMessage = `${getRandomJoinMessage()}\n\nCiao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}!\n${nconf.get("DISCORD_URL")} è il nostro server Discord`
+        const replyMessage = `${getRandomJoinMessage()}\n\nCiao @${participant.split('@')[0]} 👋, benvenutə in ${chat.name}!`
         const mentions = { id: { _serialized: participant } };
         await groupNotification.reply(replyMessage, { mentions: [mentions] });
     }
@@ -103,3 +100,12 @@ client.on('group_join', onGroupJoin)
 client.on('disconnected', () => {
     console.log('Disconnected!');
 });
+
+client.initialize()
+    .then(
+        async () => {
+            wwversion = await client.getWWebVersion()
+            console.log(`\n${constants.SPLASH}\n\nWhatsApp Web Version: ${wwversion}\nServer time: ${new Date().toISOString()}`)
+        })
+    .then(() => new WebAPI(client, nconf)
+    );

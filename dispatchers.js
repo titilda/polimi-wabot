@@ -76,6 +76,7 @@ class Handlers {
                     }
             };
         }
+        console.log("Handlers loaded");
     }
     async commandDispatcher(client, message, command, args, nconf) {
         if (this.commands[command]) {

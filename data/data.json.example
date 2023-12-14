@@ -1,10 +1,11 @@
 {
   "RATE_LIMIT_EVERYONE": 28800,
   "CHAT_WHITELIST": [],
-  "DISCORD_URL": "https://discord.gg/1234",
   "COMMAND_PREFIX": "/",
   "BLACKLIST": [],
   "BOT_ADMINS": [],
+  "API_PORT": 3000,
+  "API_KEY": "abcd1234",
   "groups": {
     "EXAMPLE": {
       "members": [],
